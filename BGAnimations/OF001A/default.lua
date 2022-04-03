@@ -56,7 +56,7 @@ local newRingAFT = Def.ActorFrameTexture{
 		self:SetWidth( SCREEN_WIDTH )
 		self:SetHeight( SCREEN_HEIGHT )
 		self:EnableAlphaBuffer(true)
-		self:Create()
+		if not p.Texture then self:Create() end
 		p.Texture = self:GetTexture()
 		p:playcommand("Draw")
 	end,

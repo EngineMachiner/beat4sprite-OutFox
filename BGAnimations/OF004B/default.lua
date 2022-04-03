@@ -17,9 +17,11 @@ return Def.ActorFrame{
 	BGA_G.BGSet( { File = BGA_G.SongBGPath() } ):Load(),
 	Def.ActorFrameTexture{
 		OnCommand=function(self)
+			local p = self:GetParent()
 			self:setsize( SCREEN_WIDTH, SCREEN_BOTTOM )
-			self:EnableAlphaBuffer(true):Create()
-			self:GetParent().Tex = self:GetTexture()
+			self:EnableAlphaBuffer(true)
+			if not p.Tex then self:Create() end
+			p.Tex = self:GetTexture()
 		end,	params:Load()
 	},
 	Def.Sprite{
