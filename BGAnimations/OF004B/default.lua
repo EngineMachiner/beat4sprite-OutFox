@@ -13,7 +13,7 @@ local params = BGA_G.Create( {
 
 params:ParTweak( sub )
 
-return Def.ActorFrame{
+return BGA_G.Frame() .. {
 	BGA_G.BGSet( { File = BGA_G.SongBGPath() } ):Load(),
 	Def.ActorFrameTexture{
 		OnCommand=function(self)

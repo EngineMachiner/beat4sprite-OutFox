@@ -34,7 +34,7 @@ local LoadMenuBG = Def.ActorFrame {
 			self.p:spin():effectmagnitude(0,0,-3)
 		end,
 		SequenceCommand=function(self)
-			local d = self:GetDelay(1) * 8
+			local d = self:GetDelay() * 8
 			self:rotationx(0):linear(d):rotationx(360)
 			self:queuecommand("Sequence")
 		end
@@ -47,7 +47,7 @@ local LoadMenuBG = Def.ActorFrame {
 			self.p:spin():effectmagnitude(0,0,2)
 		end,
 		SequenceCommand=function(self)
-			local d = self:GetDelay(1) * 8
+			local d = self:GetDelay() * 8
 			self:rotationy(0):linear(d):rotationy(360)
 			self:queuecommand("Sequence")
 		end
@@ -70,7 +70,7 @@ for i=1,3 do
 				self.p:spin():effectmagnitude(0,0,r)
 			end,
 			SequenceCommand=function(self)
-				local d = self:GetDelay(1) * 2
+				local d = self:GetDelay() * 2
 				self:smooth(d):zoom( self.z * 1.75 ):diffusealpha(1)
 				self:smooth(d):zoom( self.z ):diffusealpha(0.5)
 				self:queuecommand("Sequence")

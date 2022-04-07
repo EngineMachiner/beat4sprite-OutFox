@@ -23,7 +23,7 @@ end
 local LoadMenuBG = Def.ActorFrame { CreateTemplate() }
 
 LoadMenuBG[1].ExtraCommand=function(self)
-	local d = self:GetDelay(1) * 8
+	local d = self:GetDelay() * 8
 	self:queuecommand("ScrollY")
 	self:linear(d):rotationx(20):rotationy(20)
 	self:linear(d):rotationx(0)
@@ -34,16 +34,16 @@ LoadMenuBG[1].ExtraCommand=function(self)
 end
 
 LoadMenuBG[1].ScrollXCommand=function(self)
-	local d = self:GetDelay(1) * 0.125
+	local d = self:GetDelay() * 0.125
 	self:texcoordvelocity(d,0)
 end
 
 LoadMenuBG[1].ScrollYCommand=function(self)
-	local d = self:GetDelay(1) * 0.125
+	local d = self:GetDelay() * 0.125
 	self:texcoordvelocity(0,d)
 end
 
-return Def.ActorFrame {
+return BGA_G.Frame() .. {
 	InitCommand=function(self) 
 		self:fov(80)
 		BGA_G.ObjFuncs(self) self:Center3D()

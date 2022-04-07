@@ -9,7 +9,7 @@ local path = GraphP .. "_retro checkerboard (stretch).png"
 local LoadMenuBG = Def.Sprite{
 	OnCommand=function(self)
 		BGA_G.ObjFuncs(self)
-		local d = self:GetDelay(1) * 0.5
+		local d = self:GetDelay() * 0.5
 		self:Load(path):Center():texcoordvelocity(0,d)
 		self:set_tween_uses_effect_delta(true)
 		self:diffuse( ColorTable.titleBGPattern )

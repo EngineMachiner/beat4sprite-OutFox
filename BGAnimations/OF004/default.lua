@@ -7,7 +7,7 @@ local params = BGA_G.Create( {
 	Zoom = 2
 } )
 
-return Def.ActorFrame{
+return BGA_G.Frame() .. {
 	OnCommand=function(self)
 		self:GetChildren()[""][2]:blend('add')
 	end,

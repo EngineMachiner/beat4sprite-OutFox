@@ -10,7 +10,7 @@ local function CreateTemplate()
 	return Def.Sprite {
 		OnCommand=function(self)
 			BGA_G.ObjFuncs(self)
-			local d = self:GetDelay(1) * 0.125
+			local d = self:GetDelay() * 0.125
 			self:GetParent():diffusealpha(0.25)
 			self:Load(path):diffuse( ColorTable.titleBGPattern )
 			self:blend('add'):zoomto(SCREEN_WIDTH*1.4,SCREEN_HEIGHT*1.4)

@@ -23,7 +23,7 @@ local function Action(ring)
 		ring:addcommand("Sequence", function()
 
 			local zInfo = { ring:GetZ(), ring:GetRotationZ() }
-			local d = ring:GetDelay(1) * 8
+			local d = ring:GetDelay() * 8
 			local ang = math.random( 1000, 3500 ) * 0.001
 			local clockWise = math.random(0,1)
 			clockWise = clockWise == 0 and -1 or 1

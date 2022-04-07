@@ -22,18 +22,18 @@ end
 
 local LoadMenuBG = Def.ActorFrame { CreateTemplate(),	CreateTemplate() }
 LoadMenuBG[1].ExtraCommand=function(self)
-	local d = self:GetDelay(1) * 0.125
+	local d = self:GetDelay() * 0.125
 	self:texcoordvelocity(0,d)
 end
 
 LoadMenuBG[2].ExtraCommand=function(self)
-	local d = self:GetDelay(1) * 0.125
+	local d = self:GetDelay() * 0.125
 	self:texcoordvelocity(0,-d)
 	self:fadeleft(0.4):faderight(0.4)
 end
 
 local function Alpha(self, alpha)
-	local d = self:GetDelay(1)
+	local d = self:GetDelay()
 	self:diffusealpha(alpha[1])
 	self:sleep(d * 3.5):linear(d * 0.5):diffusealpha(alpha[2])
 	self:sleep(d * 3.5):linear(d * 0.5):diffusealpha(alpha[1])

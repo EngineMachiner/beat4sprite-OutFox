@@ -13,7 +13,7 @@ local params = BGA_G.Create( {
 local a = { "Config.Load.lua", "Save/OutFoxPrefs.ini" }
 local ColorTable = BGA_G.LoadThemeModule( "default", "Theme.Colors.lua" )( LoadModule( a[1] )( "SoundwavesSubTheme", a[2] ) )
 
-return Def.ActorFrame{
+return BGA_G.Frame() .. {
 	Def.Quad {
 		InitCommand=function(self) 
 			self:Center():zoomto(SCREEN_WIDTH,SCREEN_HEIGHT) 

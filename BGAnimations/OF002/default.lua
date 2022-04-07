@@ -26,7 +26,7 @@ local LoadMenuBG = Def.ActorFrame {
 			self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT)
 			self:customtexturerect(0,0,SCREEN_WIDTH*4/512,SCREEN_HEIGHT*4/512)
 			
-			local d = self:GetDelay(2) * 0.075
+			local d = self:GetDelay() * 0.075
 			local coord = { 0, d }
 			if addPath ~= default then coord = { d, 0 } end
 			self:texcoordvelocity(coord[1], coord[2])
@@ -82,7 +82,7 @@ for i=1,8 do
 
 			SequenceCommand=function(self)
 			
-				local d = self:GetDelay(1) * 2
+				local d = self:GetDelay() * 2
 				local alpha = 0.75
 
 				if addPath ~= default then alpha = 0.25 end

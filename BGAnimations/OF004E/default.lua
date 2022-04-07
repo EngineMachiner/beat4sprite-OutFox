@@ -7,7 +7,7 @@ local params = BGA_G.Create( {
 	Zoom = 2,	Color = { Color.White, color("0,0,0,0") }
 } )
 
-return Def.ActorFrame{
+return BGA_G.Frame() .. {
 	BGA_G.BGSet( { File = BGA_G.SongBGPath() } ):Load(),
 	params:Load()
 }
