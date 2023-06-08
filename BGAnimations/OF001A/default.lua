@@ -1,110 +1,117 @@
 
-local prefs = BGA_G.SW.GetPrefs()
-local subTheme = prefs.subTheme
-local ColorTable = prefs.Colors
+local SoundWaves = beat4sprite.SoundWaves
+local Path = SoundWaves.Path .. "Graphics/"
 
--- 720 is SoundWaves screen Height
+local RingPath1 = Path .. "_bg inner ring.png"
+local RingPath2 = Path .. "_bg outer ring.png"
+
+local Preferences = SoundWaves.getPreferences()
+
+local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
+local color1 = Colors(SubTheme).titleBGPattern
+
+local param1 = beat4sprite.createInternals { File = RingPath1 }
+local param2 = beat4sprite.createInternals { File = RingPath2 }
+
+-- 720 is SoundWaves Theme height.
 local scale = SCREEN_HEIGHT / 720
 
-local function Action(ring)
+local function ring(parameters)
+	return beat4sprite.Actor(parameters) .. { OnCommand=function(self) self:init() end }
+end
 
-	BGA_G.ObjFuncs(ring)
+local RingTexture = Def.ActorFrame{
 
-	ring:diffuse( ColorTable.titleBGPattern )
+	Def.ActorFrameTexture{
 
-	ring:blend('add')
+		InitCommand=function(self)
+			
+			self:setsize( SCREEN_WIDTH, SCREEN_HEIGHT )
+			self:EnableAlphaBuffer(true):Create()
+			
+			self:GetParent().Texture = self:GetTexture()
+			
+		end,
 
-	if ring.NoAction then return end
+		beat4sprite.ActorFrame() .. { ring(param1) .. {
 
-	ring:spin():Center():diffusealpha(0.11)
-	ring:zoom( ring:GetZoom() * scale * 0.75 )
-	
-	if not ring.CmdsSet then
-		ring:addcommand("Sequence", function()
+			OnCommand=function(self)
 
-			local zInfo = { ring:GetZ(), ring:GetRotationZ() }
-			local d = ring:GetDelay() * 8
-			local ang = math.random( 1000, 3500 ) * 0.001
-			local clockWise = math.random(0,1)
-			clockWise = clockWise == 0 and -1 or 1
-			ang = ang * clockWise
+				self:xy( SCREEN_RIGHT, SCREEN_TOP )
+				self:spin():effectmagnitude(0,0,-4)
+				self:zoom( scale * 3.25 )
 
-			ring:stoptweening()
+				local p = self:GetParent():GetParent():GetParent()
+				p:playcommand("Draw")
+				
+			end
 
-			ring:linear(d):z( zInfo[1] - 750 )
-			ring:rotationz( zInfo[2] + 45 * ang )
-			ring:linear(d):z( zInfo[1] )
-			ring:rotationz( zInfo[2] )
+		} }
 
-			ring:queuecommand("Sequence")
+	},
 
-		end)
-	end
-	ring.CmdsSet = true
+	Def.Sprite {
 
+		DrawCommand=function(self)
+			self:SetTexture( self:GetParent().Texture )
+			self:Center():blend('add')
+			self:diffusealpha(0.065)
+		end
+
+	}
+
+}
+
+-- To not be confused with beat4sprite.Actor init function.
+local function init(ring)
+
+	ring:diffuse(color1)
+	ring:diffusealpha(0.125):blend('add')
+	ring:Center():spin():zoom( ring:GetZoom() * scale * 0.75 )
 	ring:queuecommand("Sequence")
 
 end
 
-local GraphP = BGA_G.GetThemesPath() .. "default/Graphics/"
-local path = GraphP .. "_bg inner ring.png"
+local RingSet = Def.ActorFrame {
 
-local newRingAFT = Def.ActorFrameTexture{
+	InitCommand=function(self)
 
-	OnCommand=function(self)
-		local p = self:GetParent()
-		self:SetWidth( SCREEN_WIDTH )
-		self:SetHeight( SCREEN_HEIGHT )
-		self:EnableAlphaBuffer(true)
-		if not p.Texture then self:Create() end
-		p.Texture = self:GetTexture()
-		p:playcommand("Draw")
+		self:RunCommandsOnChildren( function(child)
+		
+			child:addcommand( "Sequence", function()
+
+				local z, rotationz = child:GetZ(), child:GetRotationZ()
+				local angle = math.random( 1000, 3500 ) * 0.001
+				if math.random( 0, 1 ) == 1 then angle = - angle end
+	
+				local d = child:getDelay() * 8
+
+				child:stoptweening()
+				child:linear(d):z( z - 750 ):rotationz( rotationz + 45 * angle )
+				child:linear(d):z(z):rotationz( rotationz )
+	
+				child:queuecommand("Sequence")
+	
+			end )
+
+		end )
+
 	end,
 
-	Def.Sprite {
-		OnCommand=function(self)
-			path = GraphP .. "_bg inner ring.png"
-			self.NoAction = true		Action(self)
-			self:SetTextureFiltering(false)
-			self:Load(path):xy(SCREEN_RIGHT, SCREEN_TOP)
-			self:spin():effectmagnitude(0,0,-2)
-			self:zoom( scale * 3.25 )
-		end
-	}
+	beat4sprite.ActorFrame() .. { ring(param1) .. { 
+		OnCommand=function(self) init(self) self:effectmagnitude(0,0,-4) end 
+	} },
+
+	beat4sprite.ActorFrame() .. { ring(param2) .. { 
+		OnCommand=function(self) init(self) self:effectmagnitude(0,0,6) end 
+	} }
 
 }
 
-local LoadMenuBG = Def.ActorFrame {
-	LoadCommand=function(self)
-		self:RunCommandsOnChildren( 
-			function(child) Action(child) end 
-		)
-	end,
-	Def.Sprite {
-		OnCommand=function(self)
-			self:Load(path):effectmagnitude(0,0,-2)
-			self:GetParent():queuecommand("Load")
-		end	
-	},
-	Def.Sprite {
-		OnCommand=function(self)
-			path = GraphP .. "_bg outer ring.png"
-			self:Load(path):effectmagnitude(0,0,3)
-		end
-	}
-}
+return beat4sprite.ActorFrame() .. {
 
-return BGA_G.Frame() .. {
-	InitCommand=function(self) 
-		self:fov(80)	BGA_G.bitEyeFix(self)
-	end,
-	OnCommand=BGA_G.ConvertToGamePlay,
-	BGA_G.SW.BG(),		LoadMenuBG,		newRingAFT,
-	Def.Sprite{
-		DrawCommand=function(self)
-			self:SetTexture(self:GetParent().Texture)
-			self:Center():blend('add')
-			self:diffusealpha(0.05)
-		end 
-	}
+	InitCommand=function(self) self:fov(80) end,
+
+	SoundWaves.quad(),		RingSet,	RingTexture,
+
 }

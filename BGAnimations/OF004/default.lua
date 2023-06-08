@@ -1,15 +1,15 @@
 
+local SoundWaves = beat4sprite.SoundWaves
 
-local params = BGA_G.Create( {
-	File = "OutFox/A 6x10.png",
-	X_num = { -4, 5 },	Y_num = 4,
-	Delay = 4,	Frame_l = 60,
-	Zoom = 2
-} )
+return beat4sprite.ActorFrame() .. {
 
-return BGA_G.Frame() .. {
-	OnCommand=function(self)
-		self:GetChildren()[""][2]:blend('add')
-	end,
-	params:Load(),	BGA_G.SW.BG()
+	beat4sprite.Load {
+		File = "OutFox/SoundWaves/A 6x10.png",
+		Columns = { -4, 5 },	Rows = 4,
+		AnimationRate = 4,	lastState = 60,
+		Zoom = 2
+	},
+
+	SoundWaves.quad() .. { OnCommand=function(self) self:blend('add') end }
+
 }

@@ -1,28 +1,36 @@
 
-local prefs = BGA_G.SW.GetPrefs()
-local subTheme = prefs.subTheme
-local ColorTable = prefs.Colors
+local SoundWaves = beat4sprite.SoundWaves
+local Path = SoundWaves.Path .. "Graphics/"
 
-local GraphP = BGA_G.GetThemesPath() .. "default/Graphics/"
-local path = GraphP .. "_bg big grid.png"
+local Preferences = SoundWaves.getPreferences()
 
-local function CreateTemplate()
-	return Def.Sprite {
+local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
+local color1 = Colors(SubTheme).titleBGPattern
+
+local Path = Path .. "_bg big grid.png"
+local parameter = beat4sprite.createInternals { File = Path }
+
+return beat4sprite.ActorFrame() .. {
+
+	SoundWaves.quad(),	
+	
+	beat4sprite.ActorFrame() .. { beat4sprite.Actor(parameter) .. {
+
 		OnCommand=function(self)
-			BGA_G.ObjFuncs(self)
-			local d = self:GetDelay() * 0.125
-			self:GetParent():diffusealpha(0.25)
-			self:Load(path):diffuse( ColorTable.titleBGPattern )
-			self:blend('add'):zoomto(SCREEN_WIDTH*1.4,SCREEN_HEIGHT*1.4)
-			self:customtexturerect(0,0,SCREEN_WIDTH*4/512,SCREEN_HEIGHT*4/512)
-			self:Center():set_use_effect_clock_for_texcoords(true)
-			self:diffuseshift():effectperiod(4):effectcolor1(color("1,1,1,0.5"))
-			self:texcoordvelocity(d,d)
-		end
-	}
-end
 
-return BGA_G.Frame() .. {
-	OnCommand=BGA_G.ConvertToGamePlay,
-	BGA_G.SW.BG(),	Def.ActorFrame{ CreateTemplate() }
+			self:init():Center()
+
+			self:GetParent():blend('add'):diffuse(color1):diffusealpha(0.25)
+
+			self:zoomto( SCREEN_WIDTH * 1.4, SCREEN_HEIGHT * 1.4 )
+			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512, SCREEN_HEIGHT * 4 / 512 )
+			
+			self:diffuseshift():effectperiod(4):effectcolor1( color("1,1,1,0.5") )
+
+			self:texcoordvelocity( 0.125, 0.125 )
+
+		end
+
+	} }
+
 }

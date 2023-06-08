@@ -1,49 +1,65 @@
 
-local prefs = BGA_G.SW.GetPrefs()
-local subTheme = prefs.subTheme
-local ColorTable = prefs.Colors
+local SoundWaves = beat4sprite.SoundWaves
+local Path = SoundWaves.Path .. "Graphics/"
 
-local GraphP = BGA_G.GetThemesPath() .. "default/Graphics/"
-local path = GraphP .. "_bg big grid.png"
+local Preferences = SoundWaves.getPreferences()
 
-local function CreateTemplate()
-	return Def.Sprite {
+local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
+local color1 = Colors(SubTheme).titleBGPattern
+
+local Path1 = Path .. "_bg big grid.png"
+
+local param1 = beat4sprite.createInternals { File = Path1 }
+
+local function alpha( self, alpha )
+
+	local d = self:getDelay() * 0.5			local tween1, tween2 = d * 7, d
+
+	self:diffusealpha( alpha[1] )
+	self:sleep(tween1):linear(tween2):diffusealpha( alpha[2] )
+	self:sleep(tween1):linear(tween2):diffusealpha( alpha[1] )
+	self:queuecommand("AlphaCycle")
+
+end
+
+local function template()
+
+	return beat4sprite.Actor(param1) .. {
+
 		OnCommand=function(self)
-			BGA_G.ObjFuncs(self)
-			self:Load(path):diffuse( ColorTable.titleBGPattern ):diffusealpha(0.125)
-			self:blend('add'):zoomto(SCREEN_WIDTH*1.4,SCREEN_HEIGHT*1.4)
-			self:customtexturerect(0,0,SCREEN_WIDTH*4/512,SCREEN_HEIGHT*4/512)
-			self:Center():set_use_effect_clock_for_texcoords(true)
-			self:queuecommand("Extra")
-			self:queuecommand("Alpha")
+
+			self.alpha = alpha
+
+			self:init():Center()
+			self:diffuse(color1):diffusealpha(0.125):blend('add')
+			self:zoomto( SCREEN_WIDTH * 1.4, SCREEN_HEIGHT * 1.4 )
+			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512 , SCREEN_HEIGHT * 4 / 512 )
+			self:queuecommand("Post"):queuecommand("AlphaCycle")
+
 		end
 	}
+
 end
 
-local LoadMenuBG = Def.ActorFrame { CreateTemplate(),	CreateTemplate() }
-LoadMenuBG[1].ExtraCommand=function(self)
-	local d = self:GetDelay() * 0.125
-	self:texcoordvelocity(0,d)
-end
+local t = beat4sprite.ActorFrame() .. {
 
-LoadMenuBG[2].ExtraCommand=function(self)
-	local d = self:GetDelay() * 0.125
-	self:texcoordvelocity(0,-d)
-	self:fadeleft(0.4):faderight(0.4)
-end
+	template() .. {
 
-local function Alpha(self, alpha)
-	local d = self:GetDelay()
-	self:diffusealpha(alpha[1])
-	self:sleep(d * 3.5):linear(d * 0.5):diffusealpha(alpha[2])
-	self:sleep(d * 3.5):linear(d * 0.5):diffusealpha(alpha[1])
-	self:queuecommand("Alpha")
-end
+		PostCommand=function(self) self:texcoordvelocity( 0, 0.125 ) end,
+		AlphaCycleCommand=function(self) self:alpha( { 0.125, 0 } ) end
 
-LoadMenuBG[1].AlphaCommand=function(self) Alpha(self, {0.125, 0}) end
-LoadMenuBG[2].AlphaCommand=function(self) Alpha(self, {0, 0.125}) end
+	},
 
-return BGA_G.Frame() .. {
-	OnCommand=BGA_G.ConvertToGamePlay,
-	BGA_G.SW.BG(),	LoadMenuBG
+	template() .. { 
+		
+		PostCommand=function(self) 
+			self:texcoordvelocity( 0, - 0.125 ):fadeleft(0.4):faderight(0.4)
+		end,
+	
+		AlphaCycleCommand=function(self) self:alpha( { 0, 0.125 } ) end
+
+	}
+
 }
+
+return beat4sprite.ActorFrame() .. { SoundWaves.quad(),	t }

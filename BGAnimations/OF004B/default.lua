@@ -1,53 +1,46 @@
 
-local prefs = BGA_G.SW.GetPrefs()
-local ColorTable = prefs.Colors
+local SoundWaves = beat4sprite.SoundWaves
+local Path = SoundWaves.Path .. "Graphics/"
 
-local sub = ...
+local Preferences = SoundWaves.getPreferences()
 
-local params = BGA_G.Create( {
-	File = "/OutFox/A 6x10.png",
-	X_num = { -4, 5 },	Y_num = 4,
-	Delay = 4,	Frame_l = 60,
-	Zoom = 2,	Commands = "SpinXY"
-} )
+local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
+local color1 = Colors(SubTheme).titleBGPattern
+local color2 = Colors(SubTheme).titleBGA
 
-params:ParTweak( sub )
+local params = beat4sprite.create {
+	File = "/OutFox/SoundWaves/A 6x10.png",
+	Columns = { -4, 5 },	Rows = 4,				Zoom = 2,
+	AnimationRate = 4,		lastState = 60,			tweenRate = 2,
+	Commands = "SpinXY"
+}
 
-return BGA_G.Frame() .. {
-	BGA_G.BGSet( { File = BGA_G.SongBGPath() } ):Load(),
+params:tweak(...)
+
+return beat4sprite.ActorFrame() .. {
+
+	beat4sprite.Sprite.bgTemplate( { File = beat4sprite.GAMESTATE.getSongBG() } ):Load(),
+
 	Def.ActorFrameTexture{
-		OnCommand=function(self)
-			local p = self:GetParent()
-			self:setsize( SCREEN_WIDTH, SCREEN_BOTTOM )
-			self:EnableAlphaBuffer(true)
-			if not p.Tex then self:Create() end
-			p.Tex = self:GetTexture()
-		end,	params:Load()
+
+		InitCommand=function(self)
+			self:setsize( SCREEN_WIDTH, SCREEN_BOTTOM ):EnableAlphaBuffer(true):Create()
+			self:GetParent().Texture = self:GetTexture()
+		end,	
+		
+		params:Load()
+
 	},
-	Def.Sprite{
+
+	Def.Sprite {
+
 		OnCommand=function(self)
 
-			BGA_G.ObjFuncs(self)
-			self:SetTexture(self:GetParent().Tex):Center()
-			
-			BGA_G.bitEyeFix(self, function(self) 
-				bitEye.AFT = true	self:xy(0,0)
-			end)
-
-			-- Gotta adjust those colors
-			local color = ColorTable.titleBGA
-			local sorted = {}		DeepCopy(color, sorted)
-			table.sort( sorted )
-			for i=1,3 do
-				if color[i] ~= sorted[3] then
-					color[i] = color[i] * 20
-				else
-					color[i] = 1
-				end
-			end
-
-			self:diffusebottomedge( ColorTable.titleBGA )
+			self:Center():SetTexture( self:GetParent().Texture )
+			self:diffusebottomedge(color1):diffusetopedge(color2)
 
 		end
+		
 	}
+
 }

@@ -27,8 +27,16 @@ return beat4sprite.ActorFrame() .. {
 			self:zoomto( SCREEN_WIDTH * 1.4, ( SCREEN_HEIGHT + 190 ) * 1.4 )
 			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512, SCREEN_HEIGHT * 4 / 512 )
 
-			self:rotationx(-20)
+			self:queuecommand("Cycle")
 
+		end,
+
+		CycleCommand=function(self)
+
+			local t = self:getDelay() * 8
+			self:rotationy(-20):linear(t):rotationy(20):sleep( t * 2 )
+			self:linear(t):rotationy(-20):sleep( t * 2 ):queuecommand("Cycle")
+			
 		end
 
 	},

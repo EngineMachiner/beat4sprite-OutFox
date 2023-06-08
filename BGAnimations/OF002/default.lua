@@ -1,39 +1,37 @@
 
-local prefs = BGA_G.SW.GetPrefs()
-local subTheme = prefs.subTheme
-local ColorTable = prefs.Colors
+local SoundWaves = beat4sprite.SoundWaves
+local Path = SoundWaves.Path .. "Graphics/"
 
-local default = "corner (res 512x512)"
-local addPath = ... or default
+local Preferences = SoundWaves.getPreferences()
 
-local GraphP = BGA_G.GetThemesPath() .. "default/Graphics/"
-local path
+local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
+local color1 = Colors(SubTheme).titleBGPattern
 
-local LoadMenuBG = Def.ActorFrame {
+local passedArguments = ... or {}
 
-	Def.Sprite {
+local Scroll = passedArguments.Scroll or { x = 0, y = 0.125 }
+
+local Path1 = Path .. "_bg tri grid.png"
+local Path2 = Path .. "_bg tri " .. ( passedArguments.Path2 or "corner (res 512x512)" ) .. ".png"
+
+local param1 = beat4sprite.createInternals { File = Path1 }
+local param2 = beat4sprite.createInternals { File = Path2 }
+
+local t = beat4sprite.ActorFrame() .. { 
+	
+	beat4sprite.ActorFrame() .. { beat4sprite.Actor(param1) .. {
 
 		OnCommand=function(self)
 
-			self:GetParent():Center()
+			self:init():FullScreen()
 
-			path = GraphP .. "_bg tri grid.png"
-
-			BGA_G.ObjFuncs(self)
-			self:Load(path)
-			self:set_use_effect_clock_for_texcoords(true)
-			self:diffuse( ColorTable.titleBGPattern ):diffusealpha(0.03)
-			self:zoomto(SCREEN_WIDTH,SCREEN_HEIGHT)
-			self:customtexturerect(0,0,SCREEN_WIDTH*4/512,SCREEN_HEIGHT*4/512)
-			
-			local d = self:GetDelay() * 0.075
-			local coord = { 0, d }
-			if addPath ~= default then coord = { d, 0 } end
-			self:texcoordvelocity(coord[1], coord[2])
+			self:diffuse(color1):diffusealpha(0.03)
+			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512, SCREEN_HEIGHT * 4 / 512 )
+			self:texcoordvelocity( Scroll.x, Scroll.y )
 			
 		end
 
-	}
+	} }
 
 }
 
@@ -42,38 +40,25 @@ for i=1,8 do
 
 	for j=1,3 do
 
-		LoadMenuBG[#LoadMenuBG+1] = Def.Sprite {
+		t[#t+1] = beat4sprite.ActorFrame() .. { beat4sprite.Actor(param2) .. {
 
 			OnCommand=function(self)
 
-				BGA_G.ObjFuncs(self)
+				self:GetParent():Center()
+				self:init():zoom( SCREEN_CENTER_Y / 720 )
 
-				path = GraphP .. "_bg tri " .. addPath .. ".png"
-				self:Load(path)
-
-				local s = SCREEN_HEIGHT / 720
-				self:zoom( 0.5 * s )
-
-				local w = self:GetZoomedWidth()
-				local h = self:GetZoomedHeight()
+				local w, h = self:GetZoomedWidth(), self:GetZoomedHeight()
 				
-				local x = self:GetX() + w * ( i - 2.5 )
-				if i > 4 then
-					x = self:GetX() + w * ( i - 2.5 - 4 )
-					self:rotationz(180)
-				end
-				self:x(x)
-				
-				self:y( self:GetY() + h * ( j - 2 ) )
-				if j % 2 == 0 then 
-					self:rotationx( 180 )
-				end
+				local x = w * ( i - 2.5 )
 
-				self:diffuse( ColorTable.titleBGPattern )
-				self:diffusealpha(0):blend("add")
+				if i > 4 then x = w * ( i - 6.5 )	self:rotationz(180) end
 
-				local sleep = i * 2 + j - 3
-				if i > 4 then sleep = i * 2 + j - 3 - 8 end
+				if j % 2 == 0 then self:rotationx(180) end
+
+				self:xy( x, h * ( j - 2 ) )
+				self:diffuse(color1):diffusealpha(0):blend("add")
+
+				local sleep = i * 2 + j - 3		if i > 4 then sleep = sleep - 8 end
 				self:sleep(sleep)
 
 				self:queuecommand("Sequence")
@@ -82,10 +67,9 @@ for i=1,8 do
 
 			SequenceCommand=function(self)
 			
-				local d = self:GetDelay() * 2
-				local alpha = 0.75
+				local d = self:getDelay() * 2
 
-				if addPath ~= default then alpha = 0.25 end
+				local alpha = passedArguments.Alpha or 0.75
 
 				self:stoptweening()
 				self:linear(d):diffusealpha(0):sleep(d)
@@ -95,14 +79,10 @@ for i=1,8 do
 
 			end
 			
-		}
+		} }
 
 	end
 
 end
 
-return BGA_G.Frame() .. {
-	OnCommand=BGA_G.ConvertToGamePlay,
-	BGA_G.SW.BG(),
-	LoadMenuBG
-}
+return beat4sprite.ActorFrame() .. { SoundWaves.quad(),	t }
