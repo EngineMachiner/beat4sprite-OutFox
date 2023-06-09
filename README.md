@@ -1,3 +1,5 @@
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/W7W32691S)
+
 # beat4sprite-OutFox
 
 This repository contains examples as BGAnimations scripts for OutFox that were made with beat4sprite.
