@@ -4,7 +4,7 @@
 
 Outfox styled inspired collections and examples using beat4sprite.
 
-### Usage
+## Usage
 
   0. Make sure you already have [beat4sprite](https://github.com/EngineMachiner/beat4sprite).
   1. Copy the BGAnimations into your game's folder.
