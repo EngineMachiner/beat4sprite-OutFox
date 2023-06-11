@@ -2,12 +2,13 @@
 
 # beat4sprite-OutFox
 
-This repository contains examples as BGAnimations scripts for OutFox that were made with beat4sprite.
+Outfox styled inspired collections and examples using beat4sprite.
 
 ### Usage
 
-1. Copy the BGAnimations into your game's folder.
-2. Copy the Graphics in the beat4sprite Module folder.
+  0. Make sure you already have [beat4sprite](https://github.com/EngineMachiner/beat4sprite).
+  1. Copy the BGAnimations into your game's folder.
+  2. Copy the Graphics in the beat4sprite Module folder.
 
 It should look like this...
 
