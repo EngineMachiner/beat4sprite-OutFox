@@ -15,4 +15,4 @@ It should look like this...
 <img src=https://github.com/EngineMachiner/beat4sprite-Collections/assets/15896027/780786c8-3d4d-4928-b290-00616127d676 width=183>
 <br>
 
-##### beat4sprite code is licensed. ( https://github.com/EngineMachiner/beat4sprite/blob/master/LICENSE )
+##### beat4sprite code is [licensed](https://github.com/EngineMachiner/beat4sprite/blob/master/LICENSE).
