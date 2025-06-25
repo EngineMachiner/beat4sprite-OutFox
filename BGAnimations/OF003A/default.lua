@@ -1,65 +1,48 @@
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
+-- This could have been done queueing the scroll command and changing its value instead of using Cycle.lua
 
-local Preferences = SoundWaves.getPreferences()
+local Vector = Astro.Vector
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGPattern
+local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = SoundWaves.preferences()
 
-local Path1 = Path .. "_bg big grid.png"
+local BGColor = preferences.Colors.titleBGPattern           local graphic = SoundWaves.graphic
 
-local param1 = beat4sprite.createInternals { File = Path1 }
 
-local function alpha( self, alpha )
+local function Actor(t)
 
-	local d = self:getDelay() * 0.5			local tween1, tween2 = d * 7, d
+    local builder = beat4sprite.Builder {
 
-	self:diffusealpha( alpha[1] )
-	self:sleep(tween1):linear(tween2):diffusealpha( alpha[2] )
-	self:sleep(tween1):linear(tween2):diffusealpha( alpha[1] )
-	self:queuecommand("AlphaCycle")
+        Texture = graphic("_bg big grid.png"),         Colors = BGColor,       Zoom = 4,       Blend = 'add'
 
-end
+    }
 
-local function template()
+    return builder:merge(t):Load() .. {
 
-	return beat4sprite.Actor(param1) .. {
+        OnCommand=function(self) self:init(builder):diffusealpha(0):queuecommand("Cycle") end,
 
-		OnCommand=function(self)
+        CycleSetupCommand=function(self) self:playcommand("Animation") end,
 
-			self.alpha = alpha
+        AnimationCommand=function(self) self:linear(1):diffusealpha(1):sleep(6):linear(1):diffusealpha(0) end,
 
-			self:init():Center()
-			self:diffuse(color1):diffusealpha(0.125):blend('add')
-			self:zoomto( SCREEN_WIDTH * 1.4, SCREEN_HEIGHT * 1.4 )
-			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512 , SCREEN_HEIGHT * 4 / 512 )
-			self:queuecommand("Post"):queuecommand("AlphaCycle")
+        CycleCommand=function(self)
 
-		end
-	}
+            local s = self.CycleTimes
+
+            self:sleep( s[1] ):playcommand("Animation"):sleep( s[2] ):queuecommand("Cycle")
+
+        end
+        
+    }
 
 end
 
-local t = beat4sprite.ActorFrame() .. {
+local Actor1 = Actor { Scroll = Vector("Up") }
+local Actor2 = Actor { Scroll = Vector("Down") }
 
-	template() .. {
+local Quad = SoundWaves.Quad() .. { OnCommand=function(self) self:Center() end }
 
-		PostCommand=function(self) self:texcoordvelocity( 0, 0.125 ) end,
-		AlphaCycleCommand=function(self) self:alpha( { 0.125, 0 } ) end
+return beat4sprite.Builder.Load {
 
-	},
-
-	template() .. { 
-		
-		PostCommand=function(self) 
-			self:texcoordvelocity( 0, - 0.125 ):fadeleft(0.4):faderight(0.4)
-		end,
-	
-		AlphaCycleCommand=function(self) self:alpha( { 0, 0.125 } ) end
-
-	}
+    Script = "Cycle",           Actors = { Actor1,     Actor2 },            Layers = { Back = Quad }
 
 }
-
-return beat4sprite.ActorFrame() .. { SoundWaves.quad(),	t }

@@ -1,63 +1,39 @@
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
+local Vector = Astro.Vector
 
-local Preferences = SoundWaves.getPreferences()
+local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = SoundWaves.preferences()
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGPattern
+local BGColor = preferences.Colors.titleBGPattern           local graphic = SoundWaves.graphic
 
-local Path1 = Path .. "_bg big grid.png"
 
-local param1 = beat4sprite.createInternals { File = Path1 }
+local Builder = beat4sprite.Builder {
 
-local function template()
+    Blend = 'add',  	    Scroll = Vector("Left"),            Rate = 4,
 
-	return beat4sprite.Actor(param1) .. {
+    Texture = graphic("_bg big grid.png"),         Colors = { BGColor, color("#808080") },
+    
+    Sprite = { OnCommand=function(self) self:setEffect("diffuseshift") end },
 
-		OnCommand=function(self)
+    Output = { LoadSpriteCommand=function(self) self:zoom( self:GetZoom() * 3 ) end }
 
-			self:Center():init()
+}
 
-			self:blend('add'):diffuse(color1):diffusealpha(0.125)
+return Builder:Load() .. {
 
-			self:diffuseshift():effectperiod(2):effectcolor1( color("#808080") )
+    SoundWaves.Quad() .. { OnCommand=function(self) self:Center():zoom(2) end },
 
-			self:zoomto( SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2.5 )
-			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512, SCREEN_HEIGHT * 4 / 512 )
+    OnCommand=function(self) self:init(Builder):fov(80):queuecommand("Cycle") end,
 
-			self:queuecommand("Cycle")
+    CycleCommand=function(self)
+    
+        local t = self:tweenRate() * 0.5          local r = Vector( 20, 30 )
 
-		end
-	}
+        self:linear(t):setRotation(r):linear(t):rotationx(0)
 
-end
+        self:linear(t):rotationy(0):linear(t):rotationy(20)
 
-return beat4sprite.ActorFrame() .. {
-
-	InitCommand=function(self) self:fov(80) end,
-
-	SoundWaves.quad(),			template() .. {
-
-		ScrollXCommand=function(self) self:texcoordvelocity( 0.125, 0 ) end,
-		ScrollYCommand=function(self) self:texcoordvelocity( 0, 0.125 ) end,
-
-		CycleCommand=function(self)
-
-			local d = self:getDelay() * 8
-
-			self:queuecommand("ScrollY")
-
-			self:linear(d):rotationx(20):rotationy(20):linear(d):rotationx(0)
-
-			self:queuecommand("ScrollX")
-
-			self:linear(d):rotationy(0):linear(d):rotationy(20)
-
-			self:queuecommand("Cycle")
-
-		end
-
-	}
+        self:queuecommand("Cycle")
+    
+    end
 
 }

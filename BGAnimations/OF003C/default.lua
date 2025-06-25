@@ -1,76 +1,50 @@
 
+-- This could have been done queueing the scroll command and changing its value instead of using Cycle.lua
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
+local Vector = Astro.Vector
 
-local Preferences = SoundWaves.getPreferences()
+local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = SoundWaves.preferences()
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGPattern
+local BGColor = preferences.Colors.titleBGPattern           local graphic = SoundWaves.graphic
 
-local Path1 = Path .. "_bg big grid.png"
 
-local param1 = beat4sprite.createInternals { File = Path1 }
+local function Actor(t)
 
--- 720 is SoundWaves screen Height
-local scale = SCREEN_HEIGHT / 720
+    local builder = beat4sprite.Builder {
 
-local function template()
+        Texture = graphic("_bg big grid.png"),         Colors = BGColor,       Zoom = 1,       Blend = 'add',
 
-	return beat4sprite.Actor(param1) .. {
+        Output = { LoadSpriteCommand=function(self) self:zoom( self:GetZoom() * 2 ):setEffect("spin") end }
 
-		OnCommand=function(self)
+    }
 
-			self:Center():init()
-			self:blend('add'):diffuse(color1)
-			self:zoomto( SCREEN_WIDTH * 1.4, SCREEN_HEIGHT * 1.4 )
-			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512, SCREEN_HEIGHT * 4 / 512 )
-			self:queuecommand("Post")
+    return builder:merge(t):Load() .. {
 
-		end
+        OnCommand=function(self) self:init(builder):diffusealpha(0):queuecommand("Cycle") end,
 
-	}
+        CycleSetupCommand=function(self) self:playcommand("Animation") end,
+
+        AnimationCommand=function(self) self:linear(1):diffusealpha(0.75):sleep(6):linear(1):diffusealpha(0) end,
+
+        CycleCommand=function(self)
+
+            local s = self.CycleTimes
+
+            self:sleep( s[1] ):playcommand("Animation"):sleep( s[2] ):queuecommand("Cycle")
+
+        end
+        
+    }
 
 end
 
-return beat4sprite.ActorFrame() .. {
+local Actor1 = Actor { Effect = { Magnitude = Vector { z = -8 } } }
+local Actor2 = Actor { Effect = { Magnitude = Vector { z = 8 } } }
 
-	SoundWaves.quad(),			beat4sprite.ActorFrame() .. {
+local Quad = SoundWaves.Quad() .. { OnCommand=function(self) self:Center() end }
 
-		beat4sprite.ActorFrame() .. { template() .. {
+return beat4sprite.Builder.Load {
 
-			PostCommand=function(self)
-				self:zoomx( self:GetZoomX() * 2 ):zoomy( self:GetZoomY() * 2 )
-				self:queuecommand("Cycle")
-			end,
-			
-			CycleCommand=function(self)
-				local d = self:getDelay() * 4
-				self:diffusealpha(0.125):sleep(d)
-				self:linear(d * 0.5):diffusealpha(0):sleep(d)
-				self:linear(d * 0.5):diffusealpha(0.125)
-				self:queuecommand("Cycle")
-			end
-
-		} },
-
-		beat4sprite.ActorFrame() .. { template() .. {
-
-			PostCommand=function(self)
-				self:spin():effectmagnitude(0,0,8)
-				self:zoomx( self:GetZoomX() * 1.5 ):zoomy( self:GetZoomY() * 1.5 )
-				self:queuecommand("Cycle")
-			end,
-
-			CycleCommand=function(self)
-				local p, d = self:GetParent(), self:getDelay() * 4
-				p:diffusealpha(0):sleep(d)
-				p:linear(d * 0.5):diffusealpha(0.125):sleep(d)
-				p:linear(d * 0.5):diffusealpha(0):queuecommand("Cycle")
-			end
-
-		} }
-
-	}
+    Script = "Cycle",           Actors = { Actor1,     Actor2 },            Layers = { Back = Quad }
 
 }

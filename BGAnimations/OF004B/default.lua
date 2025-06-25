@@ -1,46 +1,37 @@
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
+local Vector = Astro.Vector             local Commands = beat4sprite.Actor.Commands
 
-local Preferences = SoundWaves.getPreferences()
+local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = SoundWaves.preferences()
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGPattern
-local color2 = Colors(SubTheme).titleBGA
+local Colors = preferences.Colors               Colors = { Colors.titleBGPattern,   Colors.titleBGA }
 
-local params = beat4sprite.create {
-	File = "/OutFox/SoundWaves/A 6x10.png",
-	Columns = { -4, 5 },	Rows = 4,				Zoom = 2,
-	AnimationRate = 4,		lastState = 60,			tweenRate = 2,
-	Commands = "SpinXY"
-}
 
-params:tweak(...)
+local Background = beat4sprite.Builder.SongBackground():Load()
 
-return beat4sprite.ActorFrame() .. {
+local Builder = beat4sprite.Builder {
 
-	beat4sprite.Sprite.bgTemplate( { File = beat4sprite.GAMESTATE.getSongBG() } ):Load(),
+	Texture = "OutFox/SoundWaves/A 6x10.png",         Zoom = 2.85,
 
-	Def.ActorFrameTexture{
+	States = { First = 1, Last = 60 },              Layers = { Back = Background },
+    
+    Sprite = {
 
-		InitCommand=function(self)
-			self:setsize( SCREEN_WIDTH, SCREEN_BOTTOM ):EnableAlphaBuffer(true):Create()
-			self:GetParent().Texture = self:GetTexture()
-		end,	
-		
-		params:Load()
+        OnCommand=function(self) self:queuecommand("SpinXY") end,
 
-	},
+        SpinXYCommand=function(self) Commands.SpinXY(self) self:queuecommand("SpinXY") end
 
-	Def.Sprite {
+    },
 
-		OnCommand=function(self)
-
-			self:Center():SetTexture( self:GetParent().Texture )
-			self:diffusebottomedge(color1):diffusetopedge(color2)
-
-		end
-		
-	}
+    Output = {
+        
+        OnCommand=function(self)
+            
+            self:diffusebottomedge( Colors[1] ):diffusetopedge( Colors[2] )
+        
+        end
+    
+    }
 
 }
+
+return Builder:merge(...):Load()

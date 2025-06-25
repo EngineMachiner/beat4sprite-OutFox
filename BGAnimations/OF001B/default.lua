@@ -1,102 +1,125 @@
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
 
-local RingPath1 = Path .. "_bg inner ring.png"
-local RingPath2 = Path .. "_bg outer ring.png"
+local Vector = Astro.Vector
 
-local Preferences = SoundWaves.getPreferences()
+local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = SoundWaves.preferences()
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGPattern
+local Color = preferences.Colors.titleBGPattern             local graphic = SoundWaves.graphic
 
-local param1 = beat4sprite.createInternals { File = RingPath1 }
-local param2 = beat4sprite.createInternals { File = RingPath2 }
 
--- 720 is SoundWaves screen Height
+local builder = beat4sprite.Builder {}          local Zoom = builder:zoom()
+
+local function Ring( texture )
+
+    return beat4sprite.Sprite {
+        
+        Texture = texture,
+        
+        OnCommand=function(self)
+            
+            self:init(builder):zoom(Zoom)
+
+
+            local Effect = self.Effect             Effect.Magnitude = self.Magnitude
+
+            self:setEffect("spin")
+        
+        end
+
+    }
+
+end
+
+local function innerRing( Sprite ) 
+
+    local texture = graphic("_bg inner ring.png")          return Ring(texture) .. Sprite
+
+end
+
+local function outerRing( Sprite )
+
+    local texture = graphic("_bg outer ring.png")          return Ring(texture) .. Sprite
+
+end
+
+
 local scale = SCREEN_HEIGHT / 720
 
-local function ring(parameters)
-	
-	return beat4sprite.Actor(parameters) .. {
+local function CycleCommand(self)
 
-		OnCommand=function(self)
-			self:diffuse(color1)
-			self:diffusealpha(0.125):blend('add')
-			self:init():queuecommand("Sequence") 
-		end
+    local z = { 0, - 750 }          for i,v in ipairs(z) do z[i] = v * scale end
+    
+    
+    local rotation = { self:GetRotationZ() }
 
-	}
+    local angle = 45        angle = angle * math.random( 750, 1250 ) * 0.001
+    
+    if math.random(2) == 2 then angle = - angle end
 
-end
+    rotation[2] = rotation[1] + angle
 
-local ringSet = Def.ActorFrame {
 
-	OnCommand=function(self) self:Center() end,
+    local t = self:tweenRate() * 4              self:stoptweening()
 
-	beat4sprite.ActorFrame() .. { ring(param1) .. {
+    self:linear(t):z( z[2] ):rotationz( rotation[2] )
+    self:linear(t):z( z[1] ):rotationz( rotation[1] )
 
-		OnCommand=function(self)
-			self:zoom( self:GetZoom() * 0.75 )
-			self:GetParent():spin():effectmagnitude(0,0,-6)
-		end,
-
-		SequenceCommand=function(self)
-			local d = self:getTweenRate() * 8
-			self:rotationx(0):linear(d):rotationx(360)
-			self:queuecommand("Sequence")
-		end
-
-	} },
-
-	beat4sprite.ActorFrame() .. { ring(param2) .. {
-
-		OnCommand=function(self)
-			self:zoom( self:GetZoom() * 0.75 )
-			self:GetParent():spin():effectmagnitude(0,0,4)
-		end,
-
-		SequenceCommand=function(self)
-			local d = self:getTweenRate() * 8
-			self:rotationy(0):linear(d):rotationy(360)
-			self:queuecommand("Sequence")
-		end
-
-	} }
-
-}
-
-for i=1,3 do
-
-	ringSet[#ringSet+1] = beat4sprite.ActorFrame() .. { ring(param1) .. {
-
-		OnCommand=function(self)
-
-			local zoom = self:GetZoom() * 0.125 * i * 0.5
-			self.Zoom = zoom
-			
-			self:zoom(zoom):sleep( ( i - 1 ) * 0.5 )
-
-			local r = i % 2 == 0 and -1 or 1	r = r * 25
-			self:GetParent():spin():effectmagnitude(0,0,r)
-
-		end,
-
-		SequenceCommand=function(self)
-			local d = self:getDelay() * 2
-			self:smooth(d):zoom( self.Zoom * 1.75 ):diffusealpha(1)
-			self:smooth(d):zoom( self.Zoom ):diffusealpha(0.5)
-			self:queuecommand("Sequence")
-		end
-
-	} }
+    self:queuecommand("Cycle")
 
 end
 
-return beat4sprite.ActorFrame() .. { 
+local n = 3
 
-	InitCommand=function(self) self:fov(80) end,
+local function innerRing2(i) 
 
-	SoundWaves.quad(),		ringSet 
-	
+    local z = 25        if i % 2 == 0 then z = -z end       local magnitude = Vector { z = z }
+    
+    local zoom = { i * 0.11 }         zoom[2] = zoom[1] * 1.75
+
+    local sleep = i - 1             sleep = sleep * 1.05 / n
+
+
+    return beat4sprite.ActorFrame {
+        
+        OnCommand=function(self)
+            
+            self:init(builder):zoom( zoom[1] )           self:sleep(sleep):queuecommand("Cycle")
+        
+        end,
+
+        CycleCommand=function(self)
+
+			local t = self:tweenRate()          self:smooth(t):zoom( zoom[2] ):diffusealpha(1)
+
+			self:smooth(t):zoom( zoom[1] ):diffusealpha(0.5)            self:queuecommand("Cycle")
+
+		end,
+
+        innerRing { InitCommand=function(self) self.Magnitude = magnitude end }
+
+    }
+
+end
+
+
+local Rings = beat4sprite.ActorFrame {
+
+	OnCommand=function(self)
+
+        self:init(builder):zoom(0.5)        self:blend('add'):diffuse(Color):diffusealpha(0.5)
+
+	end,
+
+	innerRing { InitCommand=function(self) self.Magnitude = Vector( 0, 32, -6 ) end },
+    outerRing { InitCommand=function(self) self.Magnitude = Vector( 32, 0, 4 ) end }
+
 }
+
+for i = 1, n do Rings[ i + 2 ] = innerRing2(i) end
+
+
+return beat4sprite.ActorFrame {
+
+	SoundWaves.Quad(),      Rings,          OnCommand=function(self) self:Center():fov(80) end,
+
+} 

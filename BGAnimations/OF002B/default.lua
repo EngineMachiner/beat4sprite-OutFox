@@ -1,4 +1,10 @@
-return loadfile( beat4sprite.Paths.getBGAFile("OF002") ) { 
-    Alpha = 0.25,       Scroll = { x = 0.125, y = 0 },
-    Path2 = "grid"
+
+local Path = beat4sprite.filePath("OF002")              local Vector = Astro.Vector
+
+local SoundWaves = beat4sprite.Modules.SoundWaves           local graphic = SoundWaves.graphic
+
+return loadfile( Path ) {
+
+    Texture = graphic("_bg tri grid.png"),          Scroll = Vector("Right"),           Alpha = 0.125
+
 }

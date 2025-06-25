@@ -1,29 +1,26 @@
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
 
-local Preferences = SoundWaves.getPreferences()
+local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = SoundWaves.preferences()
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGA
-local color2 = Colors(SubTheme).titleBGB
+local Colors = preferences.Colors               Colors = { Colors.titleBGA,     Colors.titleBGB }
 
-return beat4sprite.ActorFrame() .. {
 
-	beat4sprite.Sprite.colorQuad(color1) .. {
-		OnCommand=function(self) self:diffusebottomedge(color2) end
+return beat4sprite.ActorFrame {
+
+	beat4sprite.ScreenQuad( Colors[1] ) .. {
+
+		OnCommand=function(self) self:Center():diffusebottomedge( Colors[2] ) end
+
 	},
 
-	beat4sprite.Load {
-		File = "/OutFox/SoundWaves/A 6x10.png",
-		Columns = 5,					Rows = { -3, 4 },
-		AnimationRate = 4,				lastState = 60,
-		Zoom = 1.67,					Commands = "StairsStates",
-		Cross = { By = 1, Type = 1 }
-	},
+	beat4sprite.Builder.Load {
 
-	beat4sprite.Sprite.colorQuad(color1) .. {
-		OnCommand=function(self) self:diffusebottomedge(color2):blend('add') end
+        Zoom = 3,           Blend = 'add',
+
+		Texture = "OutFox/SoundWaves/A 6x10.png",         States = { Last = 60,    Position = true },
+        
+        Visibility = function( i, j ) i = i + j         return i % 2 == 0 end
+
 	}
 
 }

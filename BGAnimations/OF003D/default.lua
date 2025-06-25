@@ -1,36 +1,23 @@
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
+local Vector = Astro.Vector
 
-local Preferences = SoundWaves.getPreferences()
+local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = SoundWaves.preferences()
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGPattern
+local BGColor = preferences.Colors.titleBGPattern           local graphic = SoundWaves.graphic
 
-local Path = Path .. "_bg big grid.png"
-local parameter = beat4sprite.createInternals { File = Path }
 
-return beat4sprite.ActorFrame() .. {
+local Builder = beat4sprite.Builder {
 
-	SoundWaves.quad(),	
-	
-	beat4sprite.ActorFrame() .. { beat4sprite.Actor(parameter) .. {
+    Blend = 'add',  	    Scroll = Vector("UpRight"),            Rate = 4,        Zoom = 2,
 
-		OnCommand=function(self)
+    Texture = graphic("_bg big grid.png"),         Colors = { BGColor, color("#808080") },
+    
+    Sprite = { OnCommand=function(self) self:setEffect("diffuseshift") end },
 
-			self:init():Center()
+}
 
-			self:GetParent():blend('add'):diffuse(color1):diffusealpha(0.25)
+return Builder:Load() .. {
 
-			self:zoomto( SCREEN_WIDTH * 1.4, SCREEN_HEIGHT * 1.4 )
-			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512, SCREEN_HEIGHT * 4 / 512 )
-			
-			self:diffuseshift():effectperiod(4):effectcolor1( color("1,1,1,0.5") )
-
-			self:texcoordvelocity( 0.125, 0.125 )
-
-		end
-
-	} }
+    SoundWaves.Quad() .. { OnCommand=function(self) self:Center() end }
 
 }

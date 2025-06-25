@@ -1,4 +1,4 @@
 
-return loadfile( beat4sprite.Paths.getBGAFile("OF004C") ) {
-	Scroll = { x = 0, y = -1 },		ScrollOffset = 0,
-}
+local Path = beat4sprite.filePath("OF004C")             local Vector = Astro.Vector
+
+return loadfile(Path) { Scroll = Vector("Up") }

@@ -1,38 +1,40 @@
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
+local Sprite = ... or {}
 
-local Preferences = SoundWaves.getPreferences()
+local SoundWaves = beat4sprite.Modules.SoundWaves           local graphic = SoundWaves.graphic
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGPattern
+local preferences = SoundWaves.preferences()                local Color = preferences.Colors.titleBGPattern
 
-local Path1 = Path .. "_retro checkerboard (stretch).png"
-local parameter = beat4sprite.createInternals { File = Path1 }
+return beat4sprite.ActorFrame {
 
-return beat4sprite.ActorFrame() .. {
+	SoundWaves.Quad(),          OnCommand=function(self) self:fov(80):Center() end,
 
-	InitCommand=function(self) self:fov(80) end,
+	beat4sprite.Sprite {
 
-	SoundWaves.quad(),
-
-	beat4sprite.Actor(parameter) .. {
+        Texture = graphic("_retro checkerboard (stretch).png"),
 
 		OnCommand=function(self)
 
-			self:init():Center():texcoordvelocity( 0, 0.125 )
+            self:rotationx(-20)         self.rotate = self.rotationx
 
-			self:diffuse(color1):diffusealpha(0.5):fadeleft(0.4):faderight(0.4)
+            local y = 1 / self:rate()               self:fadeHorizontally(0.4)
+            
+            self:texcoordvelocity( 0, y )           self:diffuse(Color):diffusealpha(0.5)
 
-			self:zoomto( SCREEN_WIDTH * 1.4, ( SCREEN_HEIGHT + 190 ) * 1.4 )
-			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512, SCREEN_HEIGHT * 4 / 512 )
+			self:zoomto( SCREEN_WIDTH * 2, ( SCREEN_HEIGHT + 190 ) * 2 )
 
-			self:rotationx(-20)
+			self:customtexturerect( 0, 0, SCREEN_WIDTH * 5 / 512, SCREEN_HEIGHT * 5 / 512 )
 
+		end,
+
+        CycleCommand=function(self)
+
+			local t = self:rate() * 8       self:rotate(-20):linear(t):rotate(20):sleep(t)
+            
+			self:linear(t):rotate(-20):sleep(t)        self:queuecommand("Cycle")
+			
 		end
 
-	},
-
-	SoundWaves.quad() .. { OnCommand=function(self) self:blend('add') end }
+	} .. Sprite
 
 }

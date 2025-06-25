@@ -1,15 +1,12 @@
 
-local SoundWaves = beat4sprite.SoundWaves
+local SoundWaves = beat4sprite.Modules.SoundWaves
 
-return beat4sprite.ActorFrame() .. {
+local Quad = SoundWaves.Quad() .. { OnCommand=function(self) self:Center():blend('add') end }
 
-	beat4sprite.Load {
-		File = "OutFox/SoundWaves/A 6x10.png",
-		Columns = { -4, 5 },	Rows = 4,
-		AnimationRate = 4,	lastState = 60,
-		Zoom = 2
-	},
+return beat4sprite.Builder.Load {
 
-	SoundWaves.quad() .. { OnCommand=function(self) self:blend('add') end }
+    Texture = "OutFox/SoundWaves/A 6x10.png",          Layers = { Front = Quad },
+
+    States = { First = 1, Last = 60 },          Zoom = 2.85
 
 }

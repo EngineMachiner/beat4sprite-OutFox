@@ -1,88 +1,67 @@
 
-local SoundWaves = beat4sprite.SoundWaves
-local Path = SoundWaves.Path .. "Graphics/"
+local Vector = Astro.Vector
 
-local Preferences = SoundWaves.getPreferences()
+local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = SoundWaves.preferences()
 
-local SubTheme, Colors = Preferences.SubTheme, Preferences.Colors
-local color1 = Colors(SubTheme).titleBGPattern
+local BGColor = preferences.Colors.titleBGPattern           local Colors = { BGColor, Color.Alpha( BGColor, 0 ) }
 
-local passedArguments = ... or {}
+local graphic = SoundWaves.graphic
 
-local Scroll = passedArguments.Scroll or { x = 0, y = 0.125 }
 
-local Path1 = Path .. "_bg tri grid.png"
-local Path2 = Path .. "_bg tri " .. ( passedArguments.Path2 or "corner (res 512x512)" ) .. ".png"
+local Sprite = {
 
-local param1 = beat4sprite.createInternals { File = Path1 }
-local param2 = beat4sprite.createInternals { File = Path2 }
+    OnCommand=function(self)
 
-local t = beat4sprite.ActorFrame() .. { 
-	
-	beat4sprite.ActorFrame() .. { beat4sprite.Actor(param1) .. {
+        local offset = self.TilePos / 5         self:setEffectOffset(offset):setEffect("diffuseshift")
 
-		OnCommand=function(self)
-
-			self:init():FullScreen()
-
-			self:diffuse(color1):diffusealpha(0.03)
-			self:customtexturerect( 0, 0, SCREEN_WIDTH * 4 / 512, SCREEN_HEIGHT * 4 / 512 )
-			self:texcoordvelocity( Scroll.x, Scroll.y )
-			
-		end
-
-	} }
+    end
 
 }
 
+local builder = beat4sprite.Builder {
 
-for i=1,8 do
+    Texture = "OutFox/SoundWaves/_bg tri corner (res 512x512).png",         Scroll = Vector { y = 0.125 },
 
-	for j=1,3 do
+    Colors = Colors,        Sprite = Sprite,        Zoom = 0.75,        Mirror = true,          Blend = 'add',
 
-		t[#t+1] = beat4sprite.ActorFrame() .. { beat4sprite.Actor(param2) .. {
+    Rotation = Vector { z = 90 },        Effect = { Period = 2 }
 
-			OnCommand=function(self)
+}
 
-				self:GetParent():Center()
-				self:init():zoom( SCREEN_CENTER_Y / 720 )
+builder = builder:merge(...)
 
-				local w, h = self:GetZoomedWidth(), self:GetZoomedHeight()
-				
-				local x = w * ( i - 2.5 )
 
-				if i > 4 then x = w * ( i - 6.5 )	self:rotationz(180) end
+local Zoom = builder:zoom()
 
-				if j % 2 == 0 then self:rotationx(180) end
+local Scroll = builder.Scroll           builder.Scroll = nil
 
-				self:xy( x, h * ( j - 2 ) )
-				self:diffuse(color1):diffusealpha(0):blend("add")
 
-				local sleep = i * 2 + j - 3		if i > 4 then sleep = sleep - 8 end
-				self:sleep(sleep)
+return beat4sprite.ActorFrame {
 
-				self:queuecommand("Sequence")
+    beat4sprite.ActorFrame {
 
-			end,
+        SoundWaves.Quad() .. { OnCommand=function(self) self:Center() end },
 
-			SequenceCommand=function(self)
-			
-				local d = self:getDelay() * 2
+        beat4sprite.Sprite {
 
-				local alpha = passedArguments.Alpha or 0.75
+            Texture = graphic("_bg tri grid.png"),
 
-				self:stoptweening()
-				self:linear(d):diffusealpha(0):sleep(d)
-				self:linear(d):diffusealpha(alpha)
+            OnCommand=function(self)
 
-				self:queuecommand("Sequence")
+                self:init(builder):FullScreen()
 
-			end
-			
-		} }
+                local Scroll = Scroll / self:tweenRate()            local size = 512
 
-	end
+                local rect = tapLua.screenSize() * 4 / size         local x, y = rect:unpack()
 
-end
+                self:diffusealpha(0.03)         self:customtexturerect( 0, 0, x, y ):scrollTexture( Scroll )
 
-return beat4sprite.ActorFrame() .. { SoundWaves.quad(),	t }
+            end
+
+        }
+
+    },
+
+    builder:Load()
+
+}
