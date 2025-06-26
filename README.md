@@ -6,6 +6,8 @@ This repository contains collections of gameplay animations for **[OutFox](https
 
 Each branch in this repository contains theme inspired animations.
 
+[Video Example](https://www.youtube.com/watch?v=NKW4aDbaQvM)
+
 ## Usage
 
 1. Use **[beat4sprite](https://github.com/EngineMachiner/beat4sprite)**.
