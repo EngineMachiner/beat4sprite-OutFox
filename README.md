@@ -2,18 +2,13 @@
 
 # beat4sprite-OutFox
 
-Outfox styled inspired collections and examples using beat4sprite.
+This repository contains collections of gameplay animations for **[OutFox](https://github.com/TeamRizu/OutFox)**.
+
+Each branch in this repository contains theme inspired animations.
 
 ## Usage
 
-  0. Make sure you already have [beat4sprite](https://github.com/EngineMachiner/beat4sprite).
-  1. Copy the BGAnimations into your game's folder.
-  2. Copy the Graphics in the beat4sprite Module folder.
+1. Use **[beat4sprite](https://github.com/EngineMachiner/beat4sprite)**.
+2. Copy the animations in the BGAnimations folder.
+3. Copy the graphics and resources needed in the beat4sprite module folder.
 
-It should look like this...
-
-<img src=https://github.com/EngineMachiner/beat4sprite-Collections/assets/15896027/a6a92812-5603-4911-9683-09da30e8c72c width=600>
-<img src=https://github.com/EngineMachiner/beat4sprite-Collections/assets/15896027/780786c8-3d4d-4928-b290-00616127d676 width=183>
-<br>
-
-##### beat4sprite code is [licensed](https://github.com/EngineMachiner/beat4sprite/blob/master/LICENSE).
