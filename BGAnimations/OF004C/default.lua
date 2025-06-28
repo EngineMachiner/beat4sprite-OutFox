@@ -16,9 +16,11 @@ local SoundWaves = beat4sprite.Modules.SoundWaves           local preferences = 
 local BGColor = preferences.Colors.titleBGA
 
 
+local scale = SCREEN_HEIGHT / 720
+
 local builder = beat4sprite.Builder {
 
-    Texture = { "OutFox/SoundWaves/A 6x10.png" },           Zoom = 1.25,        
+    Texture = { "OutFox/SoundWaves/A 6x10.png" },           Zoom = 1.25,
 
     Colors = { BGColor, Color.White },          Rate = 3,           Scroll = Vector(),
 
@@ -52,7 +54,7 @@ builder.Composition = { OnCommand=function(self) self:rotationz(45):zoom(1.4) en
 builder.Output = { OnCommand=function(self) self:xy(0,0) end }
 
 
-local Texture = builder.Texture                 local zoom = builder.Zoom
+local Texture = builder.Texture                 local zoom = builder.Zoom * scale
 
 Renderer:LoadBy( Texture[1] ):zoom(zoom)           local Height = Renderer:GetZoomedHeight()
 
@@ -65,7 +67,7 @@ return beat4sprite.ActorFrame {
 
         builder:Load(),
 
-        InitCommand=function(self)
+        OnCommand=function(self)
 
             local pos = Vector( SCREEN_WIDTH, Height )
 
@@ -82,7 +84,7 @@ return beat4sprite.ActorFrame {
             
             local Builder = beat4sprite.Builder {
                 
-                Texture = Texture,    Blend = 'add',
+                Texture = Texture,    Blend = 'add',    Zoom = 1 / scale,
 
                 Sprite = {
                     
@@ -92,7 +94,7 @@ return beat4sprite.ActorFrame {
                         
                         x = matrix.y * 0.5 - x          x = math.ceil(x)            x = math.abs(x) * 128
 
-                        x = Vector(x)           self:moveTextureBy(x)
+                        x = Vector(x) * scale           self:moveTextureBy(x)
                     
                     end
                 

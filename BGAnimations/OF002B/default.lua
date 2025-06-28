@@ -5,6 +5,6 @@ local SoundWaves = beat4sprite.Modules.SoundWaves           local graphic = Soun
 
 return loadfile( Path ) {
 
-    Texture = graphic("_bg tri grid.png"),          Scroll = Vector("Right"),           Alpha = 0.125
+    Texture = graphic("_bg tri grid.png"),          Scroll = Vector("Left"),           Alpha = 0.125
 
 }

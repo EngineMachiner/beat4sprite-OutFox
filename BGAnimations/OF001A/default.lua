@@ -33,7 +33,7 @@ local BigRing = Def.ActorFrame {
 
 	Def.ActorFrameTexture {
 
-		InitCommand=function(self)
+		OnCommand=function(self)
 			
 			self:setsize( SCREEN_WIDTH, SCREEN_HEIGHT ):EnableAlphaBuffer(true):Create()
 			
@@ -73,14 +73,11 @@ local BigRing = Def.ActorFrame {
 
 }
 
-local scale = SCREEN_HEIGHT / 720
+local scale = SCREEN_HEIGHT / 720           local FOV = tapLua.scaleFOV( 80, scale )
 
 local function CycleCommand(self)
 
-    local z = { 0, - 750 }          for i,v in ipairs(z) do z[i] = v * scale end
-    
-
-    local rotation = { self:GetRotationZ() }
+    local z = { 0, - 750 }          local rotation = { self:GetRotationZ() }
 
     local angle = 45        angle = angle * math.random( 750, 1250 ) * 0.001
     
@@ -131,6 +128,6 @@ return beat4sprite.ActorFrame {
 
 	SoundWaves.Quad(),      Rings,        BigRing,
 
-    OnCommand=function(self) self:Center():fov(80) end,
+    OnCommand=function(self) self:Center():fov(FOV) end,
 
 }

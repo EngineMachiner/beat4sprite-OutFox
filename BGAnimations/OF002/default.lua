@@ -20,18 +20,18 @@ local Sprite = {
 
 local builder = beat4sprite.Builder {
 
-    Texture = "OutFox/SoundWaves/_bg tri corner (res 512x512).png",         Scroll = Vector { y = 0.125 },
+    Texture = "OutFox/SoundWaves/_bg tri corner (res 512x512).png",         Scroll = Vector("Down"),
 
     Colors = Colors,        Sprite = Sprite,        Zoom = 0.75,        Mirror = true,          Blend = 'add',
 
-    Rotation = Vector { z = 90 },        Effect = { Period = 2 }
+    Rotation = Vector { z = 90 },        Effect = { Period = 2 },           Rate = 4
 
 }
 
 builder = builder:merge(...)
 
 
-local Zoom = builder:zoom()
+local Zoom = builder:zoom()             local scale = builder.Scale
 
 local Scroll = builder.Scroll           builder.Scroll = nil
 
@@ -50,7 +50,7 @@ return beat4sprite.ActorFrame {
 
                 self:init(builder):FullScreen()
 
-                local Scroll = Scroll / self:tweenRate()            local size = 512
+                local Scroll = Scroll / self:tweenRate()            local size = 512 * scale
 
                 local rect = tapLua.screenSize() * 4 / size         local x, y = rect:unpack()
 
