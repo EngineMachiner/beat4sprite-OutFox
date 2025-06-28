@@ -22,7 +22,7 @@ return Builder:Load() .. {
 
     SoundWaves.Quad() .. { OnCommand=function(self) self:Center():zoom(2) end },
 
-    OnCommand=function(self) self:init(Builder):fov(80):queuecommand("Cycle") end,
+    OnCommand=function(self) self:init(Builder):setScaledFOV(80):queuecommand("Cycle") end,
 
     CycleCommand=function(self)
     

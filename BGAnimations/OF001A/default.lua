@@ -73,8 +73,6 @@ local BigRing = Def.ActorFrame {
 
 }
 
-local scale = SCREEN_HEIGHT / 720           local FOV = tapLua.scaleFOV( 80, scale )
-
 local function CycleCommand(self)
 
     local z = { 0, - 750 }          local rotation = { self:GetRotationZ() }
@@ -128,6 +126,6 @@ return beat4sprite.ActorFrame {
 
 	SoundWaves.Quad(),      Rings,        BigRing,
 
-    OnCommand=function(self) self:Center():fov(FOV) end,
+    OnCommand=function(self) self:Center():setScaledFOV(80) end,
 
 }

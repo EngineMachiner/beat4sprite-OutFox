@@ -7,7 +7,7 @@ local preferences = SoundWaves.preferences()                local Color = prefer
 
 return beat4sprite.ActorFrame {
 
-	SoundWaves.Quad(),          OnCommand=function(self) self:fov(80):Center() end,
+	SoundWaves.Quad(),          OnCommand=function(self) self:setScaledFOV(100):Center() end,
 
 	beat4sprite.Sprite {
 
@@ -15,23 +15,27 @@ return beat4sprite.ActorFrame {
 
 		OnCommand=function(self)
 
-            self:rotationx(-20)         self.rotate = self.rotationx
+            self:rotationx(-10)         self.rotate = self.rotationx
 
+            
             local y = 1 / self:rate()               self:fadeHorizontally(0.4)
             
             self:texcoordvelocity( 0, y )           self:diffuse(Color):diffusealpha(0.5)
 
-			self:zoomto( SCREEN_WIDTH * 2, ( SCREEN_HEIGHT + 190 ) * 2 )
 
-			self:customtexturerect( 0, 0, SCREEN_WIDTH * 5 / 512, SCREEN_HEIGHT * 5 / 512 )
+            local zoom = SCREEN_HEIGHT / 720
+
+            local size = self:GetSize() * 0.5           local w, h = size:unpack()
+
+			self:zoom( zoom * 8 ):customtexturerect( 0, 0, 1280 / w, 720 * 1.25 / h )
 
 		end,
 
         CycleCommand=function(self)
 
-			local t = self:rate() * 8       self:rotate(-20):linear(t):rotate(20):sleep(t)
+			local t = self:rate() * 8       self:rotate(-10):linear(t):rotate(10):sleep(t)
             
-			self:linear(t):rotate(-20):sleep(t)        self:queuecommand("Cycle")
+			self:linear(t):rotate(-10):sleep(t)        self:queuecommand("Cycle")
 			
 		end
 

@@ -120,6 +120,6 @@ for i = 1, n do Rings[ i + 2 ] = innerRing2(i) end
 
 return beat4sprite.ActorFrame {
 
-	SoundWaves.Quad(),      Rings,          OnCommand=function(self) self:Center():fov(80) end,
+	SoundWaves.Quad(),      Rings,          OnCommand=function(self) self:Center():setScaledFOV(80) end,
 
 } 
