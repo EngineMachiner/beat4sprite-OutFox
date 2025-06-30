@@ -5,9 +5,14 @@ local SoundWaves = beat4sprite.Modules.SoundWaves           local graphic = Soun
 
 local preferences = SoundWaves.preferences()                local Color = preferences.Colors.titleBGPattern
 
+
+local FOV = tapLua.scaleFOV(100)
+
+local scale = SCREEN_HEIGHT / 720           local r = 10 / scale
+
 return beat4sprite.ActorFrame {
 
-	SoundWaves.Quad(),          OnCommand=function(self) self:setScaledFOV(100):Center() end,
+	SoundWaves.Quad(),          OnCommand=function(self) self:setupDepth(FOV) end,
 
 	beat4sprite.Sprite {
 
@@ -15,7 +20,7 @@ return beat4sprite.ActorFrame {
 
 		OnCommand=function(self)
 
-            self:rotationx(-10)         self.rotate = self.rotationx
+            self:rotationx(-r)         self.rotate = self.rotationx
 
             
             local y = 1 / self:rate()               self:fadeHorizontally(0.4)
@@ -33,9 +38,9 @@ return beat4sprite.ActorFrame {
 
         CycleCommand=function(self)
 
-			local t = self:rate() * 8       self:rotate(-10):linear(t):rotate(10):sleep(t)
+			local t = self:rate() * 8       self:rotate(-r):linear(t):rotate(r):sleep(t)
             
-			self:linear(t):rotate(-10):sleep(t)        self:queuecommand("Cycle")
+			self:linear(t):rotate(-r):sleep(t)        self:queuecommand("Cycle")
 			
 		end
 

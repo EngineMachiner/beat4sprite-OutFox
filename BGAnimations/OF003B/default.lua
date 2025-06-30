@@ -18,19 +18,24 @@ local Builder = beat4sprite.Builder {
 
 }
 
+
+local FOV = tapLua.scaleFOV(80)
+
+local scale = SCREEN_HEIGHT / 720           local r = 20 / scale
+
+r = { Vector( r, r ),       Vector { y = r },      Vector(),         Vector { y = r } }
+
 return Builder:Load() .. {
 
     SoundWaves.Quad() .. { OnCommand=function(self) self:Center():zoom(2) end },
 
-    OnCommand=function(self) self:init(Builder):setScaledFOV(80):queuecommand("Cycle") end,
+    OnCommand=function(self) self:init(Builder):fov(FOV):queuecommand("Cycle") end,
 
     CycleCommand=function(self)
     
-        local t = self:tweenRate() * 0.5          local r = Vector( 20, 30 )
+        local t = self:tweenRate() * 0.5
 
-        self:linear(t):setRotation(r):linear(t):rotationx(0)
-
-        self:linear(t):rotationy(0):linear(t):rotationy(20)
+        for i,v in ipairs(r) do self:linear(t):setRotation(v):sleep(t) end
 
         self:queuecommand("Cycle")
     

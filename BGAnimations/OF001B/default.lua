@@ -118,8 +118,10 @@ local Rings = beat4sprite.ActorFrame {
 for i = 1, n do Rings[ i + 2 ] = innerRing2(i) end
 
 
+local FOV = tapLua.scaleFOV(80)
+
 return beat4sprite.ActorFrame {
 
-	SoundWaves.Quad(),      Rings,          OnCommand=function(self) self:Center():setScaledFOV(80) end,
+	SoundWaves.Quad(),      Rings,          OnCommand=function(self) self:setupDepth(FOV) end,
 
 } 
