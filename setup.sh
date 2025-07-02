@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-FALLBACK="Themes/_fallback"         if [ -d "Appearance" ]; then FALLBACK="Appearance/$FALLBACK"; fi      
+FALLBACK="Themes/_fallback";         if [ -d "Appearance" ]; then FALLBACK="Appearance/$FALLBACK"; fi      
 
 DIRECTORY="beat4sprite-OutFox"
 
