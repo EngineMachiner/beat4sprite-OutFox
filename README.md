@@ -2,7 +2,7 @@
 
 # beat4sprite-OutFox
 
-This repository contains collections of gameplay animations for **[OutFox](https://github.com/TeamRizu/OutFox)**.
+This repository contains collections of gameplay animations for **[OutFox](https://github.com/TeamRizu/OutFox)** using **[beat4sprite](https://github.com/EngineMachiner/beat4sprite)**.
 
 Each branch in this repository contains theme inspired animations.
 
