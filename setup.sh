@@ -1,14 +1,7 @@
 #!/bin/bash
 set -e
 
-FALLBACK="Appearance/Themes/_fallback";         MODULES="Modules"
-
-DIRECTORY="beat4sprite-OutFox"
-
-
-# Check modules folder.
-
-if [ -d "$FALLBACK/$MODULES" ]; then MODULES="$FALLBACK/$MODULES"; fi
+FALLBACK="Appearance/Themes/_fallback";         DIRECTORY="beat4sprite-OutFox"
 
 
 # Clone repository.
@@ -20,7 +13,7 @@ git clone "$REPOSITORY" "$DIRECTORY"
 
 echo "Moving files...";             cp -r "$DIRECTORY/BGAnimations" "./"
 
-cp -r "$DIRECTORY/Modules" "$MODULES"
+cp -r "$DIRECTORY/Modules" "$FALLBACK"
 
 
 rm -rf "$DIRECTORY"
