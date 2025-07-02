@@ -10,6 +10,8 @@ Each branch in this repository contains theme inspired animations.
 
 ## Installation
 
+1. Install **[beat4sprite](https://github.com/EngineMachiner/beat4sprite)**.
+
 ### Bash
 
 These animations can be installed using this bash command in your game directory:
@@ -22,7 +24,6 @@ curl -s https://raw.githubusercontent.com/EngineMachiner/beat4sprite-OutFox/refs
 
 Or they can be added manually:
 
-1. Install **[beat4sprite](https://github.com/EngineMachiner/beat4sprite)**.
 2. Copy the animations in the BGAnimations folder.
 3. Copy the graphics and resources needed in the beat4sprite module folder.
 
