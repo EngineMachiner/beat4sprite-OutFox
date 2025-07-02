@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-TARGET="";         if [ -d "Appearance" ]; then TARGET="Appearance/Themes/_fallback"; fi      
+TARGET="Modules";         if [ -d "Appearance" ]; then TARGET="Appearance/Themes/_fallback"; fi      
 
 DIRECTORY="beat4sprite-OutFox"
 
