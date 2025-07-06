@@ -10,21 +10,27 @@ DIRECTORY="beat4sprite-OutFox"
 
 REPOSITORY="https://github.com/EngineMachiner/beat4sprite-OutFox.git"
 
-git clone "$REPOSITORY" "$DIRECTORY"
+#git clone "$REPOSITORY" "$DIRECTORY"
 
 
 while true; do
 
-    # Branch checkout.
+    while true; do
 
-    echo "Please enter the branch name.";
+        # Branch checkout.
 
-    read BRANCH;        git -C "$DIRECTORY" checkout "$BRANCH" || break
+        echo "Please enter the branch name.";
+
+        read BRANCH;        git -C "$DIRECTORY" checkout "$BRANCH" || continue
 
 
-    echo "Moving files...";             cp -r "$DIRECTORY/BGAnimations" "./"
+        echo "Moving files...";             cp -r "$DIRECTORY/BGAnimations" "./"
 
-    cp -r "$DIRECTORY/Modules" "$TARGET"
+        cp -r "$DIRECTORY/Modules" "$TARGET"
+
+        break
+
+    done
 
 
     echo "Clone another branch?"
