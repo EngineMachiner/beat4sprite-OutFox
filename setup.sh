@@ -10,7 +10,7 @@ DIRECTORY="beat4sprite-OutFox"
 
 REPOSITORY="https://github.com/EngineMachiner/beat4sprite-OutFox.git"
 
-#git clone "$REPOSITORY" "$DIRECTORY"
+git clone "$REPOSITORY" "$DIRECTORY"
 
 
 while true; do
