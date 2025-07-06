@@ -25,6 +25,7 @@ Each branch in this repository contains theme inspired animations.
 
 Or they can be added manually:
 
-  2. Copy the animations in `./BGAnimations`.
-  3. Copy the graphics and resources needed in the beat4sprite module folder.
+  2. Clone the repository and checkout the branch.
+  3. Copy the animations in `./BGAnimations`.
+  4. Copy the graphics and resources needed in the beat4sprite module folder.
 
